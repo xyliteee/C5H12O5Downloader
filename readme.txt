@@ -1,0 +1,1 @@
+You need to put your ffmpeg here like /bin,/doc,/include,/lib,LICENSE.txt.

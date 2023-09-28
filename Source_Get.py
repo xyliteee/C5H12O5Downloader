@@ -378,9 +378,9 @@ def Login_Info(cookie):
     headers = {
             "cookie":f"{cookie}",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.11"}
-    response = requests.get(url=bvlink, headers=headers)
     while True:
         try:
+            response = requests.get(url=bvlink, headers=headers)
             time.sleep(0.5)
             name = re.findall('<title>(.*?)的', response.text)[0]#str
             face_link = re.findall('href="(.*?)"', response.text)[7]#link

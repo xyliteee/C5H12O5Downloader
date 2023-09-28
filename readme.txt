@@ -1,1 +1,1 @@
-You need to put your ffmpeg here like /bin,/doc,/include,/lib,LICENSE.txt.
+You need to put your ffmpeg in/ffmepg like /bin,/doc,/include,/lib,LICENSE.txt.

@@ -1,6 +1,6 @@
 You need to put your ffmpeg in /ffmepg,like /bin,/doc,/include,/lib,LICENSE.txt
 
-Some package are needed:
+Some packages are needed:
      pip install -r requirements.txt
 
 If you want to use *.ui,launch your Qt Designer and open it:

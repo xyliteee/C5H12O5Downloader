@@ -1,4 +1,4 @@
-You need to put your ffmpeg in /ffmepg,like /bin,/doc,/include,/lib,LICENSE.txt
+You need to put your ffmpeg in /ffmpeg,like /bin,/doc,/include,/lib,LICENSE.txt
 
 Some packages are needed:
      pip install -r requirements.txt

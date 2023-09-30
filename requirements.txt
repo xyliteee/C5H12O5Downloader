@@ -1,0 +1,7 @@
+PyQt5
+PyQt5-tools
+PyQt-Fluent-Widgets[full]
+requests
+qrcode
+win11toast
+httpx

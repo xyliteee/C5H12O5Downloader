@@ -141,6 +141,7 @@ class MainWindow(QWidget):
         self.logoutbvlinktemp = ""
         self.loginbvlinktemp = ""
         self.empth_thread = None
+        self.page = 1
         self.VideoDownload_thread = [1,2,3,4,5,6,7,8,9] 
         self.download_toast_message = [1,2,3,4,5,6,7,8,9]
 

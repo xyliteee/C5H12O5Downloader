@@ -293,8 +293,8 @@ class Class_Source_Get():
                 self.parent.parent.VideoDownload_thread[downflag].down_percent_sig.emit(Mix_Info)
             Mix_Errorcode = 0
             self.parent.parent.VideoDownload_thread[downflag].down_percent_sig.emit(["下载完成",0,Mix_Errorcode,downflag,f"{self.Title[:15]}"])
-        except:
-
+        except Exception as e:
+            e = str(e)
             logtime = str(datetime.datetime.now()).replace(" ","-")[:-7]
             logtime = logtime.replace(":","-")
             with open('error_log.txt', 'a') as f:

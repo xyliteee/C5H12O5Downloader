@@ -5,3 +5,4 @@ requests
 qrcode
 win11toast
 httpx
+cython

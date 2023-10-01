@@ -8,6 +8,7 @@ import datetime
 import os
 import time
 from win11toast import toast
+import httpx
 
 
 class Class_Source_Get():
@@ -348,39 +349,76 @@ class Class_Source_Get():
         except:
             None
 
+class QRlogin():
+    def __init__(self,parent):
+        super().__init__()
+        self.parent = parent
 
-def QRCode_Get():
-        headers = {
-            "referer":"https://www.bilibili.com",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
-            }
-        bvlink = 'https://passport.bilibili.com/x/passport-login/web/qrcode/generate?source=main-fe-header'
-        try:
-            response = requests.get(url=bvlink, headers=headers)
-            data = json.loads(response.content)['data']
-            qr = qrcode.QRCode(version=5,error_correction=qrcode.constants.ERROR_CORRECT_L,box_size=10,border=4,)
-            qr.add_data(data['url'])
-            qr.make(fit=True)
-            img = qr.make_image(fill_color="black")
-            img.save("Qrcode")
-        except Exception as e:
+    def QRCode_Get(self):
+            headers = {
+                "referer":"https://www.bilibili.com",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+                }
+            bvlink = 'https://passport.bilibili.com/x/passport-login/web/qrcode/generate?source=main-fe-header'
+            try:
+                response = requests.get(url=bvlink, headers=headers)
+                data = json.loads(response.content)['data']
+                qr = qrcode.QRCode(version=5,error_correction=qrcode.constants.ERROR_CORRECT_L,box_size=10,border=4,)
+                qr.add_data(data['url'])
+                qr.make(fit=True)
+                img = qr.make_image(fill_color="black")
+                img.save("Qrcode")
+            except Exception as e:
 
-            e = str(e)
-            logtime = str(datetime.datetime.now()).replace(" ","-")[:-7]
-            logtime = logtime.replace(":","-")
-            with open('error_log.txt', 'a') as f:
-                f.write(logtime +"二维码保存"+ e + '\n')
-            
-            if "Errno 11001" in e:
-                data = 11001
-            elif "WinError 10061" in e or "Max retries" in e:
-                data = 10061
-            elif "10053" in e:
-                data = 10053
-            else:
-                data = -1
+                e = str(e)
+                logtime = str(datetime.datetime.now()).replace(" ","-")[:-7]
+                logtime = logtime.replace(":","-")
+                with open('error_log.txt', 'a') as f:
+                    f.write(logtime +"二维码保存"+ e + '\n')
+                
+                if "Errno 11001" in e:
+                    data = 11001
+                elif "WinError 10061" in e or "Max retries" in e:
+                    data = 10061
+                elif "10053" in e:
+                    data = 10053
+                else:
+                    data = -1
 
-        return data
+            try:
+                self.parent.Get_QRcode_signal.emit(0)
+                flag =0
+                token = data['qrcode_key']
+                with httpx.Client() as client:
+                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36 QIHU 360SE'}
+                    url = f"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={token}&source=main-fe-header"
+                    while True:
+                        flag += 1
+                        data_login = client.get(url=url, headers=headers)  # 请求二维码状态
+                        data_login = json.loads(data_login.text)
+                        code = str(data_login['data']['message'])
+                        if code == "":#扫码确认了
+
+                            SESSDATA = dict(client.cookies)["SESSDATA"]
+                            cookie = f"SESSDATA={SESSDATA};"#获取cookie
+                            self.parent.Get_cookies_signal.emit(cookie)
+                            break
+                        elif flag > 10:
+                            self.parent.Get_cookies_signal.emit("timeout")
+                            break
+                        time.sleep(2)
+            except Exception as e:
+                e = str(e)
+
+                logtime = str(datetime.datetime.now()).replace(" ","-")[:-7]
+                logtime = logtime.replace(":","-")
+                with open('error_log.txt', 'a') as f:
+                    f.write(logtime +"二维码扫码"+ e + '\n')
+
+                errorcode = data
+                
+                self.parent.Get_QRcode_signal.emit(errorcode)
+                self.parent.Get_cookies_signal.emit(errorcode)
 
 
 
